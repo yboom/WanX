@@ -51,6 +51,23 @@ function processParameters(p){
 	return p;
 }
 
+function text(m,h,w) {
+// render the text
+    var o = [];  // list of 3D objects
+    var l = vector_text(0,0,m);  // line segments for each character
+    l.forEach(function(s) {                // process the line segments
+            o.push(rectangular_extrude(s,{w: w,h: h}));
+        }
+    );
+// center the message
+    m = union(o);
+    var b = m.getBounds();
+    var x = 0 - b[0].x - ((b[1].x - b[0].x)/2);
+    var y = 0 - b[0].y - ((b[1].y - b[0].y)/2);
+    var z = 0 - b[0].z - ((b[1].z - b[0].z)/2);
+    return m.translate([x,y,z]);
+}
+
 function main(p) {
 	//p=processParameters(p);
 	console.log(JSON.stringify(p));
@@ -59,10 +76,11 @@ function main(p) {
        );
     
     for (var i=0;i<p.num;i++){
+	    var t = text(i+1+"",0.1,1).rotateX(90);
     	r=r.union(
     		CSG.roundedCylinder(
 	            {start:[0,0,0],end:[0,0,10]}
-            ).rotateEulerAngles(p.z[i],p.x[i],0)
+            ).subtract(t).rotateEulerAngles(p.z[i],p.x[i],0)
     	);
     }
     return r;

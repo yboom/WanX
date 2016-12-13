@@ -50,11 +50,12 @@ $(document).ready(function() {
       });
 
     $("#editHandle").click(function() {
-        if ($("#editFrame").width() == 0) {
-          $("#editFrame").css("width",'40%');
+    	//console.log($("#editHandle").position());
+        if ($("#parametersdiv").css("left") == $(window).width()+'px') {
+          $("#parametersdiv").css("left",'auto');
           $("#editHandle").attr('src',"imgs/editHandleIn.png");
         } else {
-          $("#editFrame").css("width",'0px');
+          $("#parametersdiv").css("left",$(window).width()+'px');
           $("#editHandle").attr('src',"imgs/editHandleOut.png");
         }
       });
@@ -104,6 +105,7 @@ $(document).ready(function() {
   });
 
 var ex = [
+  { file:'wt.jscad', title: 'WonderTwig' },
   { file:'logo.jscad', title: 'OpenJSCAD.org Logo' },
   { file:'logo.amf', title: 'OpenJSCAD.org Logo', type: 'AMF' },
 

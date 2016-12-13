@@ -169,7 +169,7 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
     </div> <!-- about -->
 
 <!-- editor -->
-    <div id="editFrame">
+<!-- <div id="editFrame">
       <div>
         <img id="editHandle" src="imgs/editHandleIn.png"></img>
       </div>
@@ -188,20 +188,25 @@ function main() {
       )
    ).translate([0,0,1.5]).scale(10);
 }
-      </div>
-    </div> <!-- editor -->
+      </div>-->
+    <!--</div>  editor -->
 
 <!-- design viewer -->
     <div oncontextmenu="return false;" id="viewerContext"></div> <!-- avoiding popup when right mouse is clicked -->
 
 <!-- design parameters -->
-    <div id="parametersdiv"></div>
+	
+    <div id="parametersdiv">
+    <div>
+        <img id="editHandle" src="imgs/editHandleIn.png"></img>
+      </div>
+    </div>
     <div id="selectdiv"></div>
 
 <!-- design information (status message, download buttons, drag and drop area, etc) -->
     <div id="tail">
       <div id="statusdiv"></div>
-      <div id="filedropzone">
+      <div id="filedropzone" style="display:none">
         <div id="filedropzone_empty">
 <script>document.write("Drop one or more supported files"+
      (browser=='chrome'&&me=='web-online'?", or folder with jscad files ":"")+

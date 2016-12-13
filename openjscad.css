@@ -1,7 +1,12 @@
 /* openjscad.css, originally written by Joost Nieuwenhuijse
  *    few changes made by Rene K. Mueller for OpenSCAD.org
  */
-
+body{
+	overflow-x: hidden;
+}
+body,html {
+  position: fixed;
+}
 #filedropzone {
   border: 2px dashed #bbb;
   -moz-border-radius: 5px;
@@ -60,8 +65,10 @@ canvas {
   /* display: inline-block;     ineffective since we do control in openjscad.js */
   position: absolute;         
 
-  bottom: 9em;                /* draggable via jQuery cannot move bottom: align, stick at the bottom (bug!!) */
-  left: 1em;
+  /*bottom: 9em;                 draggable via jQuery cannot move bottom: align, stick at the bottom (bug!!) 
+  left:1em*/
+  top:0;
+  right:1em;
   /* top: 2em;                if draggable, but must be left/top oriented, cannot be aligned bottom which looks nicer
      left: 16em;
    */
