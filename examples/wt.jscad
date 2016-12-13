@@ -8,23 +8,37 @@ function getParameterDefinitions() {
       max: 10, 
       step: 1}, 
     { name: 'angles',
-      type: 'choice',
-      values: ["XZ"],
-      captions: ["XZ"],
-      initial: 'XZ', 
-      caption: 'Angles of' }, 
+      type: 'group',
+      caption: 'Branch angles' }, 
     { name: 'x', 
       array_size_name:'num',
       type: 'number', 
       initial: 90,
       initial2:90, 
+      initial3:90, 
+      initial4:90, 
+      initial5:180, 
       caption: 'Around X'},
     { name: 'z', 
       array_size_name:'num',
       type: 'number', 
       initial: 0, 
       initial2:90, 
-      caption: 'Around Z'}
+      initial3:180,
+      initial4:270,
+      initial5:0, 
+      caption: 'Around Z'},
+    { name: 'options',
+      type: 'group',
+      caption: "Options"},
+    { name: 'resolution', 
+      type: 'int',
+      caption: 'Resolution',
+      initial: 16,
+      min: 16,
+      max: 64, 
+      step: 16},
+    { name: 'embossed', type: 'checkbox', checked: true, caption: 'Embossed?' },   
     ]; 
 } 
 
@@ -71,16 +85,26 @@ function text(m,h,w) {
 function main(p) {
 	//p=processParameters(p);
 	console.log(JSON.stringify(p));
+	var radius=5;
+	
 	var r=CSG.roundedCylinder(
-       {start:[0,0,0],end:[0,0,10]}
+       {start:[0,0,0],end:[0,0,radius*4],radius:radius,resolution: p.resolution}
        );
+    if (p.embossed){
+		var t = text("0",4,2).scale(radius*0.1).rotateX(90).translate([0,radius,radius*3]);
+    	r=r.subtract(t);
+    }
     
     for (var i=0;i<p.num;i++){
-	    var t = text(i+1+"",0.1,1).rotateX(90);
+	    var cy=CSG.roundedCylinder(
+	            {start:[0,0,0],end:[0,0,radius*4],radius:radius,resolution: p.resolution}
+            );
+    	if (p.embossed){
+			var t = text(i+1+"",4,2).scale(radius*0.1).rotateX(90).translate([0,radius,radius*3]);
+			cy=cy.subtract(t);
+		}
     	r=r.union(
-    		CSG.roundedCylinder(
-	            {start:[0,0,0],end:[0,0,10]}
-            ).subtract(t).rotateEulerAngles(p.z[i],p.x[i],0)
+    		cy.rotateEulerAngles(p.z[i],p.x[i],0)
     	);
     }
     return r;
