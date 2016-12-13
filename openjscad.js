@@ -1819,12 +1819,7 @@ OpenJsCad.Processor.prototype = {
         // implementing instantUpdate
         var that = this;
         if (paramdef.hasOwnProperty("array_size_name")){
-        	var indexControl=document.createElement("input");
-        	indexControl.setAttribute("type","number");
-        	indexControl.setAttribute("initial",1);
-        	indexControl.value=1;
-        	indexControl.setAttribute("min",1);
-        	indexControl.setAttribute("step",1);
+        	var indexControl=document.createElement("select");
         	var max=100;
         	for(var j = 0; j < this.paramDefinitions.length; j++){
         		if (this.paramDefinitions[j].name==paramdef.array_size_name){
@@ -1836,19 +1831,25 @@ OpenJsCad.Processor.prototype = {
         				c.controls=[control];
         		}
         	}
-        	indexControl.setAttribute("max",max);
+        	
         	control.values=[];
-        	for (var j=0;j<max;j++)
+        	for (var j=0;j<max;j++){
+			    var option = document.createElement("option");
+				option.value = j;
+				option.text = j+1;
+        		indexControl.add(option);
+        		
         		if (paramdef["initial"+(j+1)]){
         			control.values.push(paramdef["initial"+(j+1)]);
         		}
         		else{
 	        		control.values.push(paramdef.initial);
 	        	}
+	        }
         	indexControl.valueElement=control;
         	control.indexElement=indexControl;
         	indexControl.onchange = function(e){
-        		e.target.valueElement.value=e.target.valueElement.values[e.target.value-1];
+        		e.target.valueElement.value=e.target.valueElement.values[e.target.options[e.target.selectedIndex].value];
         		console.log(e.target.valueElement.values);
         	}
         }
@@ -1858,15 +1859,23 @@ OpenJsCad.Processor.prototype = {
           	for (var i=0;i<e.target.controls.length;i++){
           		var c=e.target.controls[i];
           		if (c.values.length>v){
-          			c.values=c.values.slice(0,v);
-          			if (c.indexElement.value>v){
-          				c.indexElement.value=v;
+          			if (c.indexElement.selectedIndex>=v){
+          				c.indexElement.selectedIndex=v-1;
           				c.value=c.values[v-1];
           			}
+          			for (var j=0;j<c.values.length-v;j++){
+          				c.indexElement.remove(c.indexElement.options.length-1);
+          			}
+          			c.values=c.values.slice(0,v);
           		}
           		else{
           			var base = c.values.length;
           			for (var j=0;j<v-base;j++){
+          				var option = document.createElement("option");
+						option.value = j+base;
+						option.text = j+base+1;
+						c.indexElement.add(option);
+						
           				if (c.getAttribute("initial"+(j+1+base))){
 	          				c.values.push(c.getAttribute("initial"+(j+1+base)));
           				}
@@ -1875,11 +1884,10 @@ OpenJsCad.Processor.prototype = {
 	          			}
           			}
           		}
-	          	c.indexElement.setAttribute("max",v);
           	}
           }
           if (e.target.values){
-          	e.target.values[e.target.indexElement.value-1]=e.target.value;
+          	e.target.values[e.target.indexElement.selectedIndex]=e.target.value;
           	console.log(e.target.values);
           }
           var l = e.currentTarget.nextElementSibling;
