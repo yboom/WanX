@@ -1240,6 +1240,18 @@ OpenJsCad.Processor.prototype = {
           break;
         case 'float':
         case 'number':
+          if (control.values){
+          	paramValues[control.paramName]=[];
+          	for (var j=0;j<control.values.length;j++){
+	          var value = control.values[j];
+    	      if (!isNaN(parseFloat(value)) && isFinite(value)) {
+        	    paramValues[control.paramName].push(parseFloat(value));
+	          } else {
+    	        throw new Error("Parameter ("+control.paramName+")["+(j+1)+"] is not a valid number ("+value+")");
+        	  }
+        	}
+	        break;
+          }          
           var value = control.value;
           if (!isNaN(parseFloat(value)) && isFinite(value)) {
             paramValues[control.paramName] = parseFloat(value);
@@ -1248,6 +1260,18 @@ OpenJsCad.Processor.prototype = {
           }
           break;
         case 'int':
+          if (control.values){
+          	paramValues[control.paramName]=[];
+          	for (var j=0;j<control.values.length;j++){
+	          var value = control.values[j];
+    	      if (!isNaN(parseFloat(value)) && isFinite(value)) {
+        	    paramValues[control.paramName].push(parseInt(value));
+	          } else {
+    	        throw new Error("Parameter ("+control.paramName+")["+(j+1)+"] is not a valid number ("+value+")");
+        	  }
+        	}
+	        break;
+          }          
           var value = control.value;
           if (!isNaN(parseFloat(value)) && isFinite(value)) {
             paramValues[control.paramName] = parseInt(value);
@@ -1791,9 +1815,60 @@ OpenJsCad.Processor.prototype = {
         th.innerHTML = control.text;
         tr.appendChild(th);
       } else {
+        control.setAttribute("id","param_"+paramdef.name);
         // implementing instantUpdate
         var that = this;
+        if (paramdef.hasOwnProperty("array_size_name")){
+        	var indexControl=document.createElement("input");
+        	indexControl.setAttribute("type","number");
+        	indexControl.setAttribute("initial",1);
+        	indexControl.value=1;
+        	indexControl.setAttribute("min",1);
+        	indexControl.setAttribute("step",1);
+        	var max=100;
+        	for(var j = 0; j < this.paramDefinitions.length; j++){
+        		if (this.paramDefinitions[j].name==paramdef.array_size_name){
+        			max=this.paramDefinitions[j].initial;
+        			var c=document.getElementById("param_"+paramdef.array_size_name);
+        			if (c.controls)
+        				c.controls.push(control)
+        			else
+        				c.controls=[control];
+        		}
+        	}
+        	indexControl.setAttribute("max",max);
+        	control.values=[];
+        	for (var j=0;j<max;j++)
+        		control.values.push(paramdef.initial);
+        	indexControl.valueElement=control;
+        	control.indexElement=indexControl;
+        	indexControl.onchange = function(e){
+        		e.target.valueElement.value=e.target.valueElement.values[e.target.value-1];
+        		console.log(e.target.valueElement.values);
+        	}
+        }
         control.onchange = function(e) {
+          if (e.target.controls){
+            var v=parseInt(e.target.value);
+          	for (var i=0;i<e.target.controls.length;i++){
+          		var c=e.target.controls[i];
+          		if (c.values.length>v){
+          			c.values=c.values.slice(0,v);
+          			if (c.indexElement.value>v){
+          				c.indexElement.value=v;
+          				c.value=c.values[v-1];
+          			}
+          		}
+          		else{
+          			for (var j=0;j<v-c.values.length;j++) c.values.push(c.getAttribute("initial"));
+          		}
+	          	c.indexElement.setAttribute("max",v);
+          	}
+          }
+          if (e.target.values){
+          	e.target.values[e.target.indexElement.value-1]=e.target.value;
+          	console.log(e.target.values);
+          }
           var l = e.currentTarget.nextElementSibling;
           if(l !== null && l.nodeName == "LABEL") {
             l.innerHTML = e.currentTarget.value;
@@ -1814,6 +1889,8 @@ OpenJsCad.Processor.prototype = {
         td.innerHTML = label;
         tr.appendChild(td);
         td = document.createElement("td");
+        if (control.indexElement)
+        	td.appendChild(control.indexElement);        
         td.appendChild(control);
         if("label" in control) {
           td.appendChild(control.label);

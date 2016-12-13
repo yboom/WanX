@@ -3,7 +3,7 @@ function getParameterDefinitions() {
     { name: 'num', 
       type: 'int',
       caption: 'Number of branches',
-      initial: 2,
+      initial: 1,
       min: 1,
       max: 10, 
       step: 1}, 
@@ -13,12 +13,16 @@ function getParameterDefinitions() {
       captions: ["XZ"],
       initial: 'XZ', 
       caption: 'Angles of' }, 
-    { name: 'values', 
-      type: 'text', 
-      initial: '90,0', 
-      size: 20, 
-      caption: 'Values', 
-      placeholder: 'Comma-separated numbers' }
+    { name: 'x', 
+      array_size_name:'num',
+      type: 'number', 
+      initial: 90, 
+      caption: 'Around X'},
+    { name: 'z', 
+      array_size_name:'num',
+      type: 'number', 
+      initial: 0, 
+      caption: 'Around Z'}
     ]; 
 } 
 
@@ -46,12 +50,13 @@ function processParameters(p){
 }
 
 function main(p) {
-	p=processParameters(p);
+	//p=processParameters(p);
+	console.log(JSON.stringify(p));
 	var r=CSG.roundedCylinder(
        {start:[0,0,0],end:[0,0,10]}
        );
     
-    for (var i=0;i<p.num-1;i++){
+    for (var i=0;i<p.num;i++){
     	r=r.union(
     		CSG.roundedCylinder(
 	            {start:[0,0,0],end:[0,0,10]}
