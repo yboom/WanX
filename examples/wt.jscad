@@ -16,12 +16,14 @@ function getParameterDefinitions() {
     { name: 'x', 
       array_size_name:'num',
       type: 'number', 
-      initial: 90, 
+      initial: 90,
+      initial2:90, 
       caption: 'Around X'},
     { name: 'z', 
       array_size_name:'num',
       type: 'number', 
       initial: 0, 
+      initial2:90, 
       caption: 'Around Z'}
     ]; 
 } 

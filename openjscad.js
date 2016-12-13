@@ -1839,7 +1839,12 @@ OpenJsCad.Processor.prototype = {
         	indexControl.setAttribute("max",max);
         	control.values=[];
         	for (var j=0;j<max;j++)
-        		control.values.push(paramdef.initial);
+        		if (paramdef["initial"+(j+1)]){
+        			control.values.push(paramdef["initial"+(j+1)]);
+        		}
+        		else{
+	        		control.values.push(paramdef.initial);
+	        	}
         	indexControl.valueElement=control;
         	control.indexElement=indexControl;
         	indexControl.onchange = function(e){
@@ -1860,7 +1865,15 @@ OpenJsCad.Processor.prototype = {
           			}
           		}
           		else{
-          			for (var j=0;j<v-c.values.length;j++) c.values.push(c.getAttribute("initial"));
+          			var base = c.values.length;
+          			for (var j=0;j<v-base;j++){
+          				if (c.getAttribute("initial"+(j+1+base))){
+	          				c.values.push(c.getAttribute("initial"+(j+1+base)));
+          				}
+          				else{
+	          				c.values.push(c.getAttribute("initial"));
+	          			}
+          			}
           		}
 	          	c.indexElement.setAttribute("max",v);
           	}
